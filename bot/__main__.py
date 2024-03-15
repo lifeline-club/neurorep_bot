@@ -21,10 +21,6 @@ async def bot_setup(application) -> None:
     )
 
 
-
-
-
-
 def main() -> None:
     create_tables()
 
