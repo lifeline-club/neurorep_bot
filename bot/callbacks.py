@@ -7,6 +7,12 @@ from telegram.ext import ContextTypes
 from bot.config import language
 from bot.db.repo import Repo
 
+import time
+import requests
+import json
+
+from bot.config import YANDEX_GPT_API_KEY, YANDEX_CATALOG, SYSTEM_PROMPT
+
 repo = Repo()
 
 
@@ -33,7 +39,47 @@ async def choose_track(update: Update, user_id: int, text: str) -> None:
                 }
         case _:
             await update.message.reply_text(f"Предмет {text} не найден")
-            return {"meta": {}}
+            return {"meta": {'choosed_track': ""}}
+
+
+
+async def subject_selection(subject: str):
+    body = {
+        "modelUri": f"gpt://{YANDEX_CATALOG}/{"yandexgpt-lite"}",
+        "completionOptions": {"stream": False, "temperature": 0, "maxTokens": "2000"},
+        "messages": [
+            {"role": "system", "text": SYSTEM_PROMPT},
+            {"role": "user", "text": subject},
+        ],
+    }
+
+    url = "https://llm.api.cloud.yandex.net/foundationModels/v1/completionAsync"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Api-Key {YANDEX_GPT_API_KEY}",
+        "x-folder-id": YANDEX_CATALOG,
+    }
+
+    response = requests.post(url, headers=headers, json=body)
+    response_json = json.loads(response.text)
+    operation_id = response_json["id"]
+
+    url = f"https://llm.api.cloud.yandex.net/operations/{operation_id}"
+    headers = {"Authorization": f"Api-Key {YANDEX_GPT_API_KEY}"}
+
+    done = False
+    while not done:
+        response = requests.get(url, headers=headers)
+        response_json = json.loads(response.text)
+        done = response_json["done"]
+        time.sleep(1)
+
+    if response.status_code != 200:
+        return "ERROR"
+
+    answer = response_json["response"]["alternatives"][0]["message"]["text"]
+
+    return answer
 
 
 class States(Enum):
@@ -56,4 +102,4 @@ async def message_handler(
         case 1:
             meta = choose_track(update, user_id, text)["meta"]
             repo.users.update_user_state(user_id, state=2, meta=json.dumps(meta))
-
+            update.message.reply_text(subject_selection(meta['choosed_track']))
