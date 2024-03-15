@@ -10,6 +10,7 @@ from telegram import Bot, BotCommand
 
 from bot.config import TOKEN
 from bot.callbacks import *
+from bot.db.commands import create_tables
 
 
 async def bot_setup(application) -> None:
@@ -21,10 +22,12 @@ async def bot_setup(application) -> None:
 
 
 def main() -> None:
+    create_tables()
+
     application = ApplicationBuilder().token(TOKEN).post_init(bot_setup).build()
 
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(MessageHandler(TEXT, wildcard))
+    application.add_handler(MessageHandler(TEXT, message_handler))
 
     application.run_polling()
 
