@@ -102,10 +102,10 @@ async def message_handler(
         case 1:
             meta = await choose_track(update, user_id, text)
             meta = meta["meta"]
-            repo.users.update_user_state(user_id, state=10 if meta["choosed_track"] == "математика" else 2, meta=json.dumps(meta))
+            repo.users.update_user_state(user_id, state=10 if meta["choosed_track"] == "Математика" else 2, meta=json.dumps(meta))
             to_send = await subject_selection(meta["choosed_track"])
             await update.message.reply_text(to_send)
-            if meta["choosed_track"] == "математика":
+            if meta["choosed_track"] == "Математика":
                 task_to_send = """
 Конкурс исполнителей проводится в 5 дней. Всего заявлено 80 выступлений — по одно-
 му от каждой страны, участвующей в конкурсе. Исполнитель из России участвует в конкурсе.
