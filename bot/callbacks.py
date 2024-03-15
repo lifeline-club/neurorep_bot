@@ -102,10 +102,19 @@ async def message_handler(
         case 1:
             meta = await choose_track(update, user_id, text)
             meta = meta["meta"]
-            repo.users.update_user_state(user_id, state=2, meta=json.dumps(meta))
+            repo.users.update_user_state(user_id, state=10 if meta["choosed_track"] == "математика" else 2, meta=json.dumps(meta))
             to_send = await subject_selection(meta["choosed_track"])
             await update.message.reply_text(to_send)
-            task_to_send = """
+            if meta["choosed_track"] == "математика":
+                task_to_send = """
+Конкурс исполнителей проводится в 5 дней. Всего заявлено 80 выступлений — по одно-
+му от каждой страны, участвующей в конкурсе. Исполнитель из России участвует в конкурсе.
+В первый день запланировано 8 выступлений, остальные распределены поровну между остав-
+шимися днями. Порядок выступлений определяется жеребьёвкой. Какова вероятность, что
+выступление исполнителя из России состоится в третий день конкурса?
+"""
+            else:
+                task_to_send = """
 Расставьте знаки препинания. Укажите номера предложений, в которых нужно поставить ОДНУ запятую.
 1) Туч на небе не было и солнце не выглядывало.
 2) Видеть её можно было ежедневно то с бидоном то с сумкой то с сумкой и бидоном вместе.
@@ -153,6 +162,21 @@ async def message_handler(
 5) отча..ться, воробуш..к
 """
                 await update.message.reply_text(task_to_send)
-                repo.users.update_user_state(user_id, state=5)
+                repo.users.update_user_state(user_id, state=0)
             else:
                 await update.message.reply_text("Неправильный ответ. Попробуйте ещё раз.")
+        case 10:
+            if text in ["0,225", "0.225"]:
+                await update.message.reply_text("Поздравляю! Ответ 0,225 правильный!")
+                task_to_send = """
+По двум параллельным железнодорожным путям друг навстречу другу следуют скорый и
+пассажирский поезда, скорости которых равны соответственно 65 км/ч и 35 км/ч. Длина пас-
+сажирского поезда равна 700 метрам. Найдите длину скорого поезда, если время, за которое
+он прошел мимо пассажирского поезда, равно 36 секундам. Ответ дайте в метрах.
+"""
+                await update.message.reply_text(task_to_send)
+                repo.users.update_user_state(user_id, state=0)
+            else:
+                await update.message.reply_text("Неправильный ответ. Попробуйте ещё раз.")
+        
+
