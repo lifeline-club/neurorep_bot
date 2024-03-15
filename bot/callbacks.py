@@ -18,9 +18,8 @@ async def wildcard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if stress_data.contains(word):
         if stress_data.is_correct(word):
             task = stress_data.generate_task()
-            praise = language.visual_praise
             await update.message.reply_text(
-                choice(language.right_answer).format(task=task, praise=praise),
+                choice(language.right_answer).format(task=task),
                 parse_mode="Markdown",
             )
 
