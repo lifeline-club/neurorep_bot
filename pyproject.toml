@@ -13,6 +13,7 @@ python-dotenv = "^1.0.0"
 ruff = "^0.3.2"
 sqlalchemy = "^2.0.28"
 psycopg2 = "^2.9.9"
+requests = "^2.31.0"
 
 
 [build-system]

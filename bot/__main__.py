@@ -9,7 +9,7 @@ from telegram.ext.filters import TEXT
 from telegram import Bot, BotCommand
 
 from bot.config import TOKEN
-from bot.callbacks import *
+from bot.callbacks import start, about, message_handler
 from bot.db.commands import create_tables
 
 
@@ -31,6 +31,7 @@ def main() -> None:
     application = ApplicationBuilder().token(TOKEN).post_init(bot_setup).build()
 
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("about", about))
     application.add_handler(MessageHandler(TEXT, message_handler))
 
     application.run_polling()
