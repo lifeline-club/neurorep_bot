@@ -1,5 +1,6 @@
 from enum import Enum
 from random import choice
+import json
 from telegram import Update, Bot
 from telegram.ext import ContextTypes
 
@@ -22,13 +23,17 @@ async def choose_track(update: Update, user_id: int, text: str) -> None:
     match text:
         case "математика":
             await update.message.reply_text(f"Предмет {text} найден")
-            return {"meta": "{'choosed_track': 'Математика'}"}
+            return {"meta": {
+                'choosed_track': 'Математика'
+            }}
         case "русский язык":
             await update.message.reply_text(f"Предмет {text} найден")
-            return {"meta": "{'choosed_track': 'Русский язык'}"}
+            return {"meta":
+                    {'choosed_track': 'Русский язык'}
+                }
         case _:
             await update.message.reply_text(f"Предмет {text} не найден")
-            return {"meta": ""}
+            return {"meta": {}}
 
 
 class States(Enum):
@@ -50,5 +55,5 @@ async def message_handler(
             await start()
         case 1:
             meta = choose_track(update, user_id, text)["meta"]
-            repo.users.update_user_state(user_id, state=2, meta=meta)
+            repo.users.update_user_state(user_id, state=2, meta=json.dumps(meta))
 
