@@ -11,8 +11,6 @@ services:
       - POSTGRES_DB_NAME=postgres
     depends_on:
       - database
-    extra_hosts:
-        - "host.docker.internal:0.0.0.0"
     networks:
       - server_network
   

@@ -12,6 +12,7 @@ python-telegram-bot = "^20.2"
 python-dotenv = "^1.0.0"
 ruff = "^0.3.2"
 sqlalchemy = "^2.0.28"
+psycopg2 = "^2.9.9"
 
 
 [build-system]

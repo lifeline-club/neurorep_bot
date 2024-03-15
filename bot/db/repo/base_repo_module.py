@@ -16,7 +16,9 @@ class BaseRepoModule:
 
     def execute_command(self, request: str) -> CursorResult:
         with self.engine.connect() as conn:
-            return conn.execute(text(request))
+            res = conn.execute(text(request))
+            conn.commit()
+            return res
 
     def get_from_db(self, request: str) -> list[dict]:
         raw_result = self.execute_command(request)

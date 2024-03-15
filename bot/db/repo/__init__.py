@@ -23,7 +23,7 @@ class UsersRepoModule(BaseRepoModule):
 
     def update_user_state(self, user_id: int, state: int, meta: str = "") -> None:
         self.create_user_if_not_exists(user_id)
-        request = f"UPDATE users SET state = {state}, meta = '{meta}' WHERE user_id = {user_id}"
+        request = f"UPDATE users SET state={state}, meta='{meta}' WHERE user_id={user_id}"
         self.execute_command(request)
 
 
@@ -31,4 +31,4 @@ class Repo:
     users: UsersRepoModule
 
     def __init__(self):
-        self.users = UsersRepoModule
+        self.users = UsersRepoModule()
